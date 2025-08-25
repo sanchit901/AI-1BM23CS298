@@ -1,0 +1,58 @@
+import time
+import random
+
+def generate_room(height, width, dirt_chance=0.3):
+    """Generate a room grid with random dirty tiles."""
+    return [['D' if random.random() < dirt_chance else ' ' for _ in range(width)] for _ in range(height)]
+
+def display_room(room, vacuum_position):
+    """Print the current state of the room with vacuum location."""
+    print("Current Room Layout:")
+    for r, row in enumerate(room):
+        row_display = ""
+        for c, tile in enumerate(row):
+            if (r, c) == vacuum_position:
+                row_display += "[V]"
+            else:
+                row_display += f" {tile} "
+        print(row_display)
+    print()
+
+def count_dirty(room):
+    """Count how many tiles are still dirty."""
+    return sum(tile == 'D' for row in room for tile in row)
+
+def run_vacuum(room, start=(0, 0)):
+    rows, cols = len(room), len(room[0])
+    r, c = start
+
+    print("Starting vacuum simulation...\n")
+    time.sleep(1)
+
+    while count_dirty(room) > 0:
+        
+        if room[r][c] == 'D':
+            print(f"Vacuum cleaning dirt at position ({r}, {c})")
+            room[r][c] = ' '
+
+        display_room(room, (r, c))
+        time.sleep(0.5)
+
+       
+        if r < rows - 1:
+            r += 1
+        else:
+            
+            r = 0
+            c += 1
+            if c == cols:
+                
+                break
+
+    print("All clean! Simulation finished.")
+
+if __name__ == "__main__":
+    HEIGHT = 3
+    WIDTH = 4
+    room = generate_room(HEIGHT, WIDTH, dirt_chance=0.4)
+    run_vacuum(room)
